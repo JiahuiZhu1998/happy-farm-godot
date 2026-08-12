@@ -30,7 +30,7 @@ func load_game() -> SaveData:
 		return SaveData.new()
 	var text := file.get_as_text()
 	file.close()
-	var parsed := JSON.parse_string(text)
+	var parsed : Variant = JSON.parse_string(text)
 	if parsed == null or not parsed is Dictionary:
 		push_error("SaveManager: save file is not valid JSON")
 		return SaveData.new()

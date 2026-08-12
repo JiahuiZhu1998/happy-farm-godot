@@ -12,9 +12,9 @@ var _plots: Array = []
 
 func _ready() -> void:
 	# Gather the 6 FarmPlot child nodes from FarmGrid
-	var farm_grid := $FarmGrid
+	var farm_grid: Node2D = $FarmGrid
 	for i in 6:
-		var plot = farm_grid.get_node("FarmPlot%d" % i)
+		var plot: Node = farm_grid.get_node("FarmPlot%d" % i)
 		if plot == null:
 			push_error("FarmScene: missing FarmPlot%d under FarmGrid" % i)
 			continue

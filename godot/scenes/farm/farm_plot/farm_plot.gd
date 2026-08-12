@@ -8,7 +8,7 @@ signal action_requested(plot_index: int, action: String)
 
 var plot_index: int = 0
 
-@onready var crop_visual = $CropVisual
+@onready var crop_visual: Node2D = $CropVisual
 @onready var plot_area: Area2D = $PlotArea
 
 
