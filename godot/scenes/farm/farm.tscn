@@ -1,0 +1,76 @@
+[gd_scene load_steps=4 format=3 uid="uid://farm_scene"]
+
+[ext_resource type="Script" path="res://scenes/farm/farm.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/farm/farm_plot/farm_plot.tscn" id="2"]
+[ext_resource type="Script" path="res://scenes/ui/hud.gd" id="3"]
+
+[node name="FarmScene" type="Node2D"]
+script = ExtResource("1")
+
+[node name="Background" type="TextureRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+expand_mode = 1
+stretch_mode = 6
+
+[node name="FarmGrid" type="Node2D" parent="."]
+position = Vector2(100, 200)
+
+[node name="FarmPlot0" parent="FarmGrid" instance=ExtResource("2")]
+position = Vector2(0, 0)
+
+[node name="FarmPlot1" parent="FarmGrid" instance=ExtResource("2")]
+position = Vector2(160, 0)
+
+[node name="FarmPlot2" parent="FarmGrid" instance=ExtResource("2")]
+position = Vector2(320, 0)
+
+[node name="FarmPlot3" parent="FarmGrid" instance=ExtResource("2")]
+position = Vector2(0, 160)
+
+[node name="FarmPlot4" parent="FarmGrid" instance=ExtResource("2")]
+position = Vector2(160, 160)
+
+[node name="FarmPlot5" parent="FarmGrid" instance=ExtResource("2")]
+position = Vector2(320, 160)
+
+[node name="GrowthTimer" type="Timer" parent="."]
+wait_time = 1.0
+autostart = true
+
+[node name="HUDLayer" type="CanvasLayer" parent="."]
+layer = 10
+
+[node name="HUDPanel" type="Control" parent="HUDLayer"]
+anchor_right = 1.0
+custom_minimum_size = Vector2(0, 48)
+script = ExtResource("3")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HUDLayer/HUDPanel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="ExpLabel" type="Label" parent="HUDLayer/HUDPanel/HBoxContainer"]
+unique_name_in_owner = true
+text = "EXP: 0"
+size_flags_horizontal = 3
+
+[node name="LevelLabel" type="Label" parent="HUDLayer/HUDPanel/HBoxContainer"]
+unique_name_in_owner = true
+text = "Lv.0"
+size_flags_horizontal = 3
+
+[node name="MoneyLabel" type="Label" parent="HUDLayer/HUDPanel/HBoxContainer"]
+unique_name_in_owner = true
+text = "Coins: 0"
+size_flags_horizontal = 3
+
+[node name="NoticeLabel" type="Label" parent="HUDLayer/HUDPanel/HBoxContainer"]
+unique_name_in_owner = true
+text = ""
+size_flags_horizontal = 3
+
+[node name="DialogLayer" type="CanvasLayer" parent="."]
+layer = 20
+
+[node name="Dialog" type="AcceptDialog" parent="DialogLayer"]

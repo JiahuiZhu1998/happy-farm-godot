@@ -1,0 +1,23 @@
+[gd_scene load_steps=3 format=3 uid="uid://farm_plot_scene"]
+
+[ext_resource type="Script" path="res://scenes/farm/farm_plot/farm_plot.gd" id="1"]
+[ext_resource type="Script" path="res://scenes/farm/crop_visual/crop_visual.gd" id="2"]
+
+[node name="FarmPlot" type="Node2D"]
+script = ExtResource("1")
+
+[node name="LandSprite" type="Sprite2D" parent="."]
+
+[node name="CropVisual" type="Node2D" parent="."]
+script = ExtResource("2")
+
+[node name="CropSprite" type="Sprite2D" parent="CropVisual"]
+
+[node name="StageLabel" type="Label" parent="CropVisual"]
+position = Vector2(-30, -50)
+text = ""
+modulate = Color(1, 1, 1, 0.85)
+
+[node name="PlotArea" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlotArea"]

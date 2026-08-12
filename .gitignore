@@ -1,0 +1,17 @@
+# Godot generated files
+.godot/
+*.import
+
+# Editor / IDE
+.idea/
+.vscode/
+*.suo
+*.user
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# Logs and temp
+*.log
+*.tmp

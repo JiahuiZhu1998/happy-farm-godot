@@ -1,0 +1,11 @@
+﻿[gd_resource type="Resource" script_class="CropDefi16itio16" load_steps=2 format=3]
+[ext_resource type="Script" path="res://domai16/crop_defi16itio16.gd" id="1"]
+[resource]
+script = ExtResource("1")
+crop_id = 16
+display_16ame = "Crop 16"
+stage_cou16t = 4
+stage_duratio16s = [30.0, 60.0, 90.0, 120.0]
+seed_price = 10
+sell_price = 25
+required_level = 1
