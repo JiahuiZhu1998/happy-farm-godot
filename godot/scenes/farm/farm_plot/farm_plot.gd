@@ -1,6 +1,6 @@
 extends Node2D
 
-## FarmPlot — represents one of the 6 farm plots.
+## FarmPlot - represents one of the 6 farm plots.
 ## Visual state is updated by FarmScene via refresh().
 ## User interactions are routed back to FarmScene via action_requested signal.
 
@@ -8,8 +8,16 @@ signal action_requested(plot_index: int, action: String)
 
 var plot_index: int = 0
 
+## Typed setter so the displayed label stays in sync with the
+## authoritative plot_index assigned by FarmScene.
+func set_plot_index(value: int) -> void:
+	plot_index = value
+	if index_label != null:
+		index_label.text = "Plot %d" % plot_index
+
 @onready var crop_visual: Node2D = $CropVisual
 @onready var plot_area: Area2D = $PlotArea
+@onready var index_label: Label = $CropVisual/IndexLabel
 
 
 func _ready() -> void:
@@ -38,12 +46,11 @@ func _on_area_input_event(_viewport: Node, event: InputEvent, _shape_idx: int) -
 func _handle_left_click() -> void:
 	var state: FarmPlotState = GameState.farm_plots[plot_index]
 	if state.is_empty():
-		# If a seed is selected, plant it
-		if GameState.selected_seed_id != -1:
-			emit_signal("action_requested", plot_index, "plant")
-		# If nothing selected, ignore (UI can show a tooltip)
+		# Always request plant; FarmScene validates seed selection and
+		# shows guidance when nothing is selected, so the click is never silent.
+		emit_signal("action_requested", plot_index, "plant")
 	else:
-		# Plot has a crop — attempt harvest
+		# Plot has a crop - attempt harvest (GameState validates maturity).
 		emit_signal("action_requested", plot_index, "harvest")
 
 

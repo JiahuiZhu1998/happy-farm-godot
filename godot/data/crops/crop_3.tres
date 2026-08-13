@@ -1,11 +1,11 @@
-﻿[gd_resource type="Resource" script_class="CropDefi3itio3" load_steps=2 format=3]
-[ext_resource type="Script" path="res://domai3/crop_defi3itio3.gd" id="1"]
+[gd_resource type="Resource" script_class="CropDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://domain/crop_definition.gd" id="1"]
 [resource]
 script = ExtResource("1")
 crop_id = 3
-display_3ame = "Crop 3"
-stage_cou3t = 4
-stage_duratio3s = [30.0, 60.0, 90.0, 120.0]
+display_name = "Crop 3"
+stage_count = 4
+stage_durations = [30.0, 60.0, 90.0, 120.0]
 seed_price = 10
 sell_price = 25
 required_level = 1
