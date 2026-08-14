@@ -18,10 +18,21 @@ func set_plot_index(value: int) -> void:
 @onready var crop_visual: Node2D = $CropVisual
 @onready var plot_area: Area2D = $PlotArea
 @onready var index_label: Label = $CropVisual/IndexLabel
+@onready var plot_border: ColorRect = $PlotBorder
 
 
 func _ready() -> void:
 	plot_area.input_event.connect(_on_area_input_event)
+	plot_area.mouse_entered.connect(_on_plot_mouse_entered)
+	plot_area.mouse_exited.connect(_on_plot_mouse_exited)
+
+
+func _on_plot_mouse_entered() -> void:
+	plot_border.visible = true
+
+
+func _on_plot_mouse_exited() -> void:
+	plot_border.visible = false
 
 
 ## Called by FarmScene every second and when state changes.

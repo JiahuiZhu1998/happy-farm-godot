@@ -10,6 +10,7 @@ extends Node2D
 @onready var crop_sprite: Sprite2D = $CropSprite
 @onready var stage_label: Label = $StageLabel
 @onready var debug_rect: ColorRect = $DebugRect
+@onready var ready_border: ColorRect = $ReadyBorder
 
 # Color per growth stage so visual stage changes are observable without art.
 const _STAGE_COLORS: Array[Color] = [
@@ -19,6 +20,7 @@ const _STAGE_COLORS: Array[Color] = [
 	Color(0.85, 0.2, 0.2, 1),    # mature   (red)
 ]
 const _EMPTY_COLOR: Color = Color(0.0, 0.0, 0.0, 0.0)
+const _READY_BORDER_COLOR: Color = Color(1.0, 0.95, 0.2, 1)
 
 
 ## Update the visual to match the current plot state.
@@ -30,34 +32,42 @@ func update_visual(state: FarmPlotState, def: CropDefinition) -> void:
 		crop_sprite.visible = false
 		debug_rect.visible = false
 		debug_rect.color = _EMPTY_COLOR
+		ready_border.visible = false
 		if stage_label:
 			stage_label.text = ""
+			stage_label.modulate = Color(1, 1, 1, 1)
 		return
 
 	crop_sprite.visible = true
 	var tex := CropGrowthSystem.get_current_texture(state, def)
 	crop_sprite.texture = tex
 
-	# Debug fallback when the real texture is missing.
+	var stage := CropGrowthSystem.compute_stage(state, def)
+	var mature := CropGrowthSystem.is_mature(state, def)
+
+	# Debug placeholder: a single native rect whose size and color both
+	# advance with the growth stage so stages are easy to tell apart.
 	if tex == null:
-		var stage := CropGrowthSystem.compute_stage(state, def)
-		var mature := CropGrowthSystem.is_mature(state, def)
-		var color_idx: int = clampi(stage, 0, _STAGE_COLORS.size() - 1)
-		debug_rect.color = _STAGE_COLORS[color_idx]
+		var ratio := float(stage + 1) / float(def.stage_count)
+		var half: float = lerp(12.0, 48.0, ratio)
+		debug_rect.offset_left = -half
+		debug_rect.offset_top = -half
+		debug_rect.offset_right = half
+		debug_rect.offset_bottom = half
+		debug_rect.color = _STAGE_COLORS[clampi(stage, 0, _STAGE_COLORS.size() - 1)]
 		debug_rect.visible = true
-		if stage_label:
-			if mature:
-				stage_label.text = "READY!"
-			else:
-				var secs := CropGrowthSystem.seconds_to_next_stage(state, def)
-				stage_label.text = "Stage %d | %ds" % [stage + 1, int(secs)]
 	else:
 		debug_rect.visible = false
-		if stage_label:
-			var stage := CropGrowthSystem.compute_stage(state, def)
-			var mature := CropGrowthSystem.is_mature(state, def)
-			if mature:
-				stage_label.text = "READY!"
-			else:
-				var secs := CropGrowthSystem.seconds_to_next_stage(state, def)
-				stage_label.text = "Stage %d | %ds" % [stage + 1, int(secs)]
+
+	# Obvious READY indication: a bright ring plus a clear label.
+	ready_border.visible = mature
+	ready_border.color = _READY_BORDER_COLOR
+
+	if stage_label:
+		if mature:
+			stage_label.text = "READY!"
+			stage_label.modulate = Color(1.0, 0.95, 0.2, 1)
+		else:
+			var secs := CropGrowthSystem.seconds_to_next_stage(state, def)
+			stage_label.text = "Stage %d | %ds" % [stage + 1, int(secs)]
+			stage_label.modulate = Color(1, 1, 1, 1)
