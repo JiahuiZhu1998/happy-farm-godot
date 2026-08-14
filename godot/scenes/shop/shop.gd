@@ -1,6 +1,6 @@
 extends Control
 
-## Shop panel — lists all available CropDefinitions and lets the player buy seeds.
+## Shop panel - lists all available CropDefinitions and lets the player buy seeds.
 
 @onready var item_list: VBoxContainer = %ItemList
 @onready var buy_count_spin: SpinBox = %BuyCountSpin
@@ -12,16 +12,16 @@ var _selected_crop_id: int = -1
 
 func _ready() -> void:
 	buy_button.pressed.connect(_on_buy_pressed)
-	status_label.text = ""
+	status_label.text = ''
 	_populate()
 
 
 func _populate() -> void:
 	for child in item_list.get_children():
 		child.queue_free()
-
 	var sorted_defs: Array = GameState.crop_definitions.values()
 	sorted_defs.sort_custom(func(a, b): return a.crop_id < b.crop_id)
+
 
 	for def in sorted_defs:
 		var row := HBoxContainer.new()
@@ -32,9 +32,9 @@ func _populate() -> void:
 
 		name_label.text = def.display_name
 		name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		price_label.text = "%d coins" % def.seed_price
-		level_label.text = "Lv.%d+" % def.required_level
-		select_btn.text = "Select"
+		price_label.text = '%d coins' % def.seed_price
+		level_label.text = 'Lv.%d+' % def.required_level
+		select_btn.text = 'Select'
 		select_btn.pressed.connect(_on_crop_selected.bind(def.crop_id))
 
 		row.add_child(name_label)
@@ -48,20 +48,34 @@ func _on_crop_selected(crop_id: int) -> void:
 	_selected_crop_id = crop_id
 	var def := GameState.get_crop_def(crop_id)
 	if def:
-		status_label.text = "Selected: %s (%d coins each)" % [def.display_name, def.seed_price]
+		var note := 'Selected: %s (%d coins each)' % [def.display_name, def.seed_price]
+		if GameState.get_level() < def.required_level:
+			note += ' | Lv.%d required' % def.required_level
+		elif GameState.player_stats.get('money', 0) < def.seed_price:
+			note += ' | Not enough coins'
+		status_label.text = note
 
 
 func _on_buy_pressed() -> void:
 	if _selected_crop_id == -1:
-		status_label.text = "Select a crop first."
+		status_label.text = 'Select a crop first.'
+		return
+	var def := GameState.get_crop_def(_selected_crop_id)
+	if def == null:
+		status_label.text = 'Invalid crop.'
 		return
 	var count := int(buy_count_spin.value)
+	if count <= 0:
+		status_label.text = 'Invalid quantity.'
+		return
+	if GameState.get_level() < def.required_level:
+		status_label.text = 'Level %d required.' % def.required_level
+		return
+	if GameState.player_stats.get('money', 0) < def.seed_price * count:
+		status_label.text = 'Not enough coins.'
+		return
 	var ok := GameState.buy_seed(_selected_crop_id, count)
 	if ok:
-		status_label.text = "Purchased %d seeds!" % count
+		status_label.text = 'Purchased %d seeds!' % count
 	else:
-		var def := GameState.get_crop_def(_selected_crop_id)
-		if def and GameState.get_level() < def.required_level:
-			status_label.text = "Level %d required." % def.required_level
-		else:
-			status_label.text = "Not enough coins."
+		status_label.text = 'Purchase failed.'
