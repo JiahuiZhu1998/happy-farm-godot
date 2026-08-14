@@ -86,6 +86,14 @@ size_flags_horizontal = 3
 [node name="ButtonSeparator" type="VSeparator" parent="HUDLayer/HUDPanel/HBoxContainer"]
 layout_mode = 2
 
+[node name="SelectedLabel" type="Label" parent="HUDLayer/HUDPanel/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Selected: None"
+size_flags_horizontal = 3
+mouse_filter = 2
+
+
 [node name="ShopButton" type="Button" parent="HUDLayer/HUDPanel/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2

@@ -9,6 +9,7 @@ extends Node2D
 @onready var shop_button: Button = %ShopButton
 @onready var inventory_button: Button = %InventoryButton
 @onready var warehouse_button: Button = %WarehouseButton
+@onready var selected_label: Label = %SelectedLabel
 @onready var shop_panel: Control = $PanelLayer/ShopPanel
 @onready var inventory_panel: Control = $PanelLayer/InventoryPanel
 @onready var warehouse_panel: Control = $PanelLayer/WarehousePanel
@@ -43,6 +44,10 @@ func _ready() -> void:
 	shop_button.pressed.connect(_toggle_panel.bind(shop_panel))
 	inventory_button.pressed.connect(_toggle_panel.bind(inventory_panel))
 	warehouse_button.pressed.connect(_toggle_panel.bind(warehouse_panel))
+
+	# Selected-seed HUD indicator
+	GameState.selected_seed_changed.connect(_on_selected_seed_changed)
+	_update_selected_seed_label(GameState.selected_seed_id)
 
 	# Initial visual refresh
 	_refresh_all_plots()
@@ -113,6 +118,36 @@ func _on_plot_action_requested(plot_index: int, action: String) -> void:
 		_:
 			push_warning("FarmScene: unknown action '%s'" % action)
 
+
+
+# ---------------------------------------------------------------------------
+# Selected-seed HUD + ESC handling
+# ---------------------------------------------------------------------------
+
+## Update the HUD label that shows the currently selected seed.
+func _update_selected_seed_label(crop_id: int) -> void:
+	if crop_id == -1:
+		selected_label.text = "Selected: None"
+		return
+	var def := GameState.get_crop_def(crop_id)
+	var crop_name := "Crop %d" % crop_id
+	if def != null and def.display_name != "":
+		crop_name = def.display_name
+	selected_label.text = "Selected: %s" % crop_name
+
+## React to selected-seed changes from GameState.
+func _on_selected_seed_changed(crop_id: int) -> void:
+	_update_selected_seed_label(crop_id)
+
+## ESC behavior: close an open panel, else deselect the current seed.
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel"):
+		if _active_panel != null:
+			_toggle_panel(_active_panel)
+			get_viewport().set_input_as_handled()
+		elif GameState.selected_seed_id != -1:
+			GameState.deselect_seed()
+			get_viewport().set_input_as_handled()
 
 func _show_dialog(msg: String) -> void:
 	dialog.dialog_text = msg
