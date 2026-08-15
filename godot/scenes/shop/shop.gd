@@ -9,6 +9,10 @@ extends Control
 
 var _selected_crop_id: int = -1
 
+const STATUS_SUCCESS: int = 0
+const STATUS_ERROR: int = 1
+const STATUS_INFO: int = 2
+
 
 func _ready() -> void:
 	buy_button.pressed.connect(_on_buy_pressed)
@@ -53,29 +57,43 @@ func _on_crop_selected(crop_id: int) -> void:
 			note += ' | Lv.%d required' % def.required_level
 		elif GameState.player_stats.get('money', 0) < def.seed_price:
 			note += ' | Not enough coins'
-		status_label.text = note
+		_show_status(note, STATUS_INFO)
 
 
 func _on_buy_pressed() -> void:
 	if _selected_crop_id == -1:
-		status_label.text = 'Select a crop first.'
+		_show_status('Select a crop first.', STATUS_ERROR)
 		return
 	var def := GameState.get_crop_def(_selected_crop_id)
 	if def == null:
-		status_label.text = 'Invalid crop.'
+		_show_status('Invalid crop.', STATUS_ERROR)
 		return
 	var count := int(buy_count_spin.value)
 	if count <= 0:
-		status_label.text = 'Invalid quantity.'
+		_show_status('Invalid quantity. Enter 1 or more.', STATUS_ERROR)
 		return
 	if GameState.get_level() < def.required_level:
-		status_label.text = 'Level %d required.' % def.required_level
+		_show_status('Level %d required to buy %s.' % [def.required_level, def.display_name], STATUS_ERROR)
 		return
-	if GameState.player_stats.get('money', 0) < def.seed_price * count:
-		status_label.text = 'Not enough coins.'
+	var total_cost: int = def.seed_price * count
+	var money: int = int(GameState.player_stats.get('money', 0))
+	if money < total_cost:
+		_show_status('Not enough coins. %d x %s costs %d, you have %d.' % [count, def.display_name, total_cost, money], STATUS_ERROR)
 		return
 	var ok := GameState.buy_seed(_selected_crop_id, count)
 	if ok:
-		status_label.text = 'Purchased %d seeds!' % count
+		_show_status('Bought %d x %s for %d coins.' % [count, def.display_name, total_cost], STATUS_SUCCESS)
 	else:
-		status_label.text = 'Purchase failed.'
+		_show_status('Purchase failed.', STATUS_ERROR)
+
+
+## Writes a status message and colours it by kind so success and failure differ.
+func _show_status(message: String, kind: int) -> void:
+	status_label.text = message
+	match kind:
+		STATUS_SUCCESS:
+			status_label.modulate = Color(0.2, 0.9, 0.3)
+		STATUS_ERROR:
+			status_label.modulate = Color(1.0, 0.45, 0.35)
+		_:
+			status_label.modulate = Color(0.85, 0.9, 1.0)
