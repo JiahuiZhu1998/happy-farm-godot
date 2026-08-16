@@ -41,6 +41,9 @@ var warehouse: Array = []
 ## Currently selected seed's crop_id. -1 means nothing is selected.
 var selected_seed_id: int = -1
 
+## v0.1 deterministic harvest yield. Exactly one warehouse unit per planted seed.
+const HARVEST_YIELD_PER_PLANT: int = 1
+
 # ---------------------------------------------------------------------------
 # Derived helpers
 # ---------------------------------------------------------------------------
@@ -101,7 +104,7 @@ func plant_crop(plot_index: int, crop_id: int) -> bool:
 	new_state.plot_index = plot_index
 	new_state.crop_id = crop_id
 	new_state.plant_timestamp = Time.get_unix_time_from_system()
-	new_state.yield_count = randi() % 50
+	new_state.yield_count = HARVEST_YIELD_PER_PLANT
 	new_state.steals_remaining = 3
 	farm_plots[plot_index] = new_state
 	# EXP reward
@@ -123,7 +126,9 @@ func harvest_plot(plot_index: int) -> int:
 		return 0
 	if not CropGrowthSystem.is_mature(state, def):
 		return 0
-	var yield_gained := state.yield_count
+	# Deterministic yield: one unit per planted seed, regardless of any
+	# legacy yield_count value previously stored in saved plots.
+	var yield_gained := HARVEST_YIELD_PER_PLANT
 	# Add to warehouse
 	_add_to_warehouse(state.crop_id, yield_gained)
 	# EXP reward (easter egg: crop 16 gives +99 bonus)
