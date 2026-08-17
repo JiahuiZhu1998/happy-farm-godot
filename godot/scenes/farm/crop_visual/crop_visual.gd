@@ -22,6 +22,28 @@ const _STAGE_COLORS: Array[Color] = [
 const _EMPTY_COLOR: Color = Color(0.0, 0.0, 0.0, 0.0)
 const _READY_BORDER_COLOR: Color = Color(1.0, 0.95, 0.2, 1)
 
+var _ready_frame: Panel = _create_ready_frame()
+
+func _create_ready_frame() -> Panel:
+	var panel := Panel.new()
+	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	panel.offset_left = -56.0
+	panel.offset_top = -56.0
+	panel.offset_right = 56.0
+	panel.offset_bottom = 56.0
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(0.0, 0.0, 0.0, 0.0)
+	sb.border_color = _READY_BORDER_COLOR
+	sb.border_width_left = 3
+	sb.border_width_top = 3
+	sb.border_width_right = 3
+	sb.border_width_bottom = 3
+	sb.set_corner_radius_all(4)
+	panel.add_theme_stylebox_override("panel", sb)
+	panel.visible = false
+	add_child(panel)
+	return panel
+
 
 ## Update the visual to match the current plot state.
 ## state: the FarmPlotState (may be empty)
@@ -33,6 +55,7 @@ func update_visual(state: FarmPlotState, def: CropDefinition) -> void:
 		debug_rect.visible = false
 		debug_rect.color = _EMPTY_COLOR
 		ready_border.visible = false
+		_ready_frame.visible = false
 		if stage_label:
 			stage_label.text = ""
 			stage_label.modulate = Color(1, 1, 1, 1)
@@ -60,7 +83,8 @@ func update_visual(state: FarmPlotState, def: CropDefinition) -> void:
 		debug_rect.visible = false
 
 	# Obvious READY indication: a bright ring plus a clear label.
-	ready_border.visible = mature
+	ready_border.visible = false
+	_ready_frame.visible = mature
 	ready_border.color = _READY_BORDER_COLOR
 
 	if stage_label:

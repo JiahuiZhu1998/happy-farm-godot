@@ -1,13 +1,18 @@
-[gd_resource type="Resource" script_class="CropDefinition" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="CropDefinition" load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://domain/crop_definition.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/crops/carrot/stage_0.png" id="2"]
+[ext_resource type="Texture2D" path="res://assets/crops/carrot/stage_1.png" id="3"]
+[ext_resource type="Texture2D" path="res://assets/crops/carrot/stage_2.png" id="4"]
+[ext_resource type="Texture2D" path="res://assets/crops/carrot/stage_3.png" id="5"]
 
 [resource]
 script = ExtResource("1")
 crop_id = 3
-display_name = "Crop 3"
+display_name = "Carrot"
 stage_count = 4
 stage_durations = [25.0, 45.0, 75.0, 105.0]
 seed_price = 25
 sell_price = 60
 required_level = 2
+stage_textures = Array[Texture2D]([ExtResource("2"), ExtResource("3"), ExtResource("4"), ExtResource("5")])
