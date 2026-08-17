@@ -1,13 +1,18 @@
-[gd_resource type="Resource" script_class="CropDefinition" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="CropDefinition" load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://domain/crop_definition.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/crops/tomato/stage_0.png" id="2"]
+[ext_resource type="Texture2D" path="res://assets/crops/tomato/stage_1.png" id="3"]
+[ext_resource type="Texture2D" path="res://assets/crops/tomato/stage_2.png" id="4"]
+[ext_resource type="Texture2D" path="res://assets/crops/tomato/stage_3.png" id="5"]
 
 [resource]
 script = ExtResource("1")
 crop_id = 5
-display_name = "Crop 5"
+display_name = "Tomato"
 stage_count = 4
 stage_durations = [40.0, 70.0, 100.0, 140.0]
 seed_price = 50
 sell_price = 110
 required_level = 3
+stage_textures = Array[Texture2D]([ExtResource("2"), ExtResource("3"), ExtResource("4"), ExtResource("5")])
