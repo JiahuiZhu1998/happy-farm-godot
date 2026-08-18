@@ -1,0 +1,44 @@
+MIT License
+
+Copyright (c) 2026 Happy Farm contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the Software), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED AS IS, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+-------------------------------------------------------------------------------
+
+THIRD-PARTY ASSETS -- SEPARATE TERMS
+
+The MIT license above applies ONLY to the source code written for this Happy
+Farm Godot remake (the GDScript scripts, scene definitions, and crop data
+resources authored in this repository).
+
+The visual game assets -- crop sprites, backgrounds, land/plot tiles, and
+player avatars -- are derived from the upstream project
+hjl-happy-farm-project (https://github.com/Hongjilin/hjl-happy-farm-project)
+by Hongjilin. The original license terms for those assets have NOT been
+verified and are NOT covered by the MIT grant above.
+
+These assets are included here for an educational remake with attribution to
+the original author. If you are the rights holder of the upstream assets and
+object to their inclusion, please open an issue so they can be removed or
+replaced.
+
+Before redistributing this project or any derivative, confirm you have
+the right to use the upstream artwork. The code (MIT) and the artwork
+(upstream, license unverified) must be treated as independent components.

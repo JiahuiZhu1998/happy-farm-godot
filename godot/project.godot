@@ -11,6 +11,7 @@ config_version=5
 [application]
 
 config/name="Happy Farm"
+config/version="0.1.0"
 config/description="Happy Farm - Godot 4.7.1 port of hjl-happy-farm-project"
 run/main_scene="res://scenes/boot/boot.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
