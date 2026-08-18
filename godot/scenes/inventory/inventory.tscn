@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://inventory_scene"]
+[gd_scene load_steps=3 format=3 uid="uid://inventory_scene"]
 
 [ext_resource type="Script" path="res://scenes/inventory/inventory.gd" id="1"]
+[ext_resource type="Theme" path="res://gui/theme/farm_theme.tres" id="2"]
 
 [node name="InventoryPanel" type="Panel"]
 offset_left = 880.0
@@ -8,22 +9,28 @@ offset_top = 80.0
 offset_right = 1260.0
 offset_bottom = 600.0
 script = ExtResource("1")
+theme = ExtResource("2")
 
 [node name="Margin" type="MarginContainer" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
 layout_mode = 2
-theme_override_constants/margin_left = 12
-theme_override_constants/margin_top = 12
-theme_override_constants/margin_right = 12
-theme_override_constants/margin_bottom = 12
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 18
 
 [node name="VBox" type="VBoxContainer" parent="Margin"]
 layout_mode = 2
+custom_minimum_size = Vector2(360, 0)
+theme_override_constants/separation = 12
 
 [node name="Title" type="Label" parent="Margin/VBox"]
 layout_mode = 2
 text = "Inventory"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 26
+theme_override_colors/font_color = Color(0.28, 0.42, 0.2, 1)
 
 [node name="Scroll" type="ScrollContainer" parent="Margin/VBox"]
 layout_mode = 2
@@ -33,8 +40,12 @@ size_flags_vertical = 3
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_constants/separation = 10
 
 [node name="SelectedLabel" type="Label" parent="Margin/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "No seed selected."
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.3, 0.4, 0.22, 1)

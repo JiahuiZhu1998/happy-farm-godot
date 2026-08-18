@@ -26,26 +26,127 @@ func _populate() -> void:
 	var sorted_defs: Array = GameState.crop_definitions.values()
 	sorted_defs.sort_custom(func(a, b): return a.crop_id < b.crop_id)
 
-
 	for def in sorted_defs:
-		var row := HBoxContainer.new()
-		var name_label := Label.new()
-		var price_label := Label.new()
-		var level_label := Label.new()
-		var select_btn := Button.new()
+		var card := _build_crop_card(def)
+		item_list.add_child(card)
 
-		name_label.text = def.display_name
-		name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		price_label.text = '%d coins' % def.seed_price
-		level_label.text = 'Lv.%d+' % def.required_level
-		select_btn.text = 'Select'
-		select_btn.pressed.connect(_on_crop_selected.bind(def.crop_id))
 
-		row.add_child(name_label)
-		row.add_child(price_label)
-		row.add_child(level_label)
-		row.add_child(select_btn)
-		item_list.add_child(row)
+## Builds a rounded card row with a crop icon, name, price, level and a Select button.
+## Locked crops (current level too low) are visually muted and their button disabled.
+func _build_crop_card(def: CropDefinition) -> Control:
+	var card := PanelContainer.new()
+	card.add_theme_stylebox_override("panel", _card_style(false))
+	card.custom_minimum_size = Vector2(340, 64)
+
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 10)
+	row.custom_minimum_size = Vector2(0, 56)
+
+	var icon_holder := CenterContainer.new()
+	icon_holder.custom_minimum_size = Vector2(56, 56)
+	var icon := _make_crop_icon(def)
+	icon_holder.add_child(icon)
+	row.add_child(icon_holder)
+
+	var info := VBoxContainer.new()
+	info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	info.add_theme_constant_override("separation", 2)
+
+	var name_label := Label.new()
+	name_label.text = def.display_name
+	name_label.add_theme_font_size_override("font_size", 18)
+	name_label.add_theme_color_override("font_color", Color(0.28, 0.2, 0.14, 1))
+	info.add_child(name_label)
+
+	var meta := HBoxContainer.new()
+	meta.add_theme_constant_override("separation", 12)
+	var price_label := Label.new()
+	price_label.text = "%d coins" % def.seed_price
+	price_label.add_theme_color_override("font_color", Color(0.5, 0.36, 0.1, 1))
+	meta.add_child(price_label)
+	var level_label := Label.new()
+	level_label.text = "Lv.%d+" % def.required_level
+	level_label.add_theme_color_override("font_color", Color(0.4, 0.45, 0.5, 1))
+	meta.add_child(level_label)
+	info.add_child(meta)
+	row.add_child(info)
+
+	var select_btn := Button.new()
+	select_btn.custom_minimum_size = Vector2(92, 0)
+	select_btn.pressed.connect(_on_crop_selected.bind(def.crop_id))
+
+	var locked := GameState.get_level() < def.required_level
+	if locked:
+		select_btn.text = "Locked"
+		select_btn.disabled = true
+		select_btn.tooltip_text = "Requires Level %d" % def.required_level
+		name_label.modulate = Color(0.6, 0.6, 0.6, 1)
+		price_label.modulate = Color(0.6, 0.6, 0.6, 1)
+		level_label.modulate = Color(0.85, 0.3, 0.3, 1)
+		icon.modulate = Color(0.55, 0.55, 0.55, 0.6)
+	else:
+		select_btn.text = "Select"
+		select_btn.tooltip_text = "Select %s seeds to buy" % def.display_name
+
+	row.add_child(select_btn)
+	card.add_child(row)
+	return card
+
+
+## Returns a small circular icon showing the crop's first growth stage texture,
+## or a tinted panel placeholder when no texture is available.
+func _make_crop_icon(def: CropDefinition) -> Control:
+	var tex: Texture2D = null
+	if def.stage_textures.size() > 0:
+		tex = def.stage_textures[0]
+	if tex != null:
+		var holder := PanelContainer.new()
+		holder.custom_minimum_size = Vector2(48, 48)
+		holder.add_theme_stylebox_override("panel", _card_style(true))
+		var tex_rect := TextureRect.new()
+		tex_rect.texture = tex
+		tex_rect.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+		tex_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		tex_rect.custom_minimum_size = Vector2(40, 40)
+		holder.add_child(tex_rect)
+		return holder
+	var placeholder := Panel.new()
+	placeholder.custom_minimum_size = Vector2(46, 46)
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(0.55, 0.78, 0.45, 1)
+	sb.corner_radius_top_left = 23
+	sb.corner_radius_top_right = 23
+	sb.corner_radius_bottom_right = 23
+	sb.corner_radius_bottom_left = 23
+	placeholder.add_theme_stylebox_override("panel", sb)
+	return placeholder
+
+
+## Builds a reusable card stylebox. Set bordered=true for the inner icon frame.
+func _card_style(bordered: bool) -> StyleBoxFlat:
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(1, 0.99, 0.92, 1) if not bordered else Color(0.95, 0.93, 0.82, 1)
+	sb.corner_radius_top_left = 12
+	sb.corner_radius_top_right = 12
+	sb.corner_radius_bottom_right = 12
+	sb.corner_radius_bottom_left = 12
+	sb.content_margin_left = 10
+	sb.content_margin_top = 8
+	sb.content_margin_right = 10
+	sb.content_margin_bottom = 8
+	if bordered:
+		sb.border_color = Color(0.7, 0.6, 0.4, 1)
+		sb.border_width_left = 2
+		sb.border_width_top = 2
+		sb.border_width_right = 2
+		sb.border_width_bottom = 2
+	else:
+		sb.border_color = Color(0.55, 0.7, 0.4, 1)
+		sb.border_width_left = 2
+		sb.border_width_top = 2
+		sb.border_width_right = 2
+		sb.border_width_bottom = 2
+	return sb
 
 
 func _on_crop_selected(crop_id: int) -> void:
@@ -54,7 +155,7 @@ func _on_crop_selected(crop_id: int) -> void:
 	if def:
 		var note := 'Selected: %s (%d coins each)' % [def.display_name, def.seed_price]
 		if GameState.get_level() < def.required_level:
-			note += ' | Lv.%d required' % def.required_level
+			note += ' - Lv.%d required to buy' % def.required_level
 		elif GameState.player_stats.get('money', 0) < def.seed_price:
 			note += ' | Not enough coins'
 		_show_status(note, STATUS_INFO)
